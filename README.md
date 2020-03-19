@@ -24,7 +24,7 @@ Ora procuratevi [questo file](https://github.com/LongSoft/PFSExtractor/releases/
 
 Nel mio caso:
 
-	`PFSextractor.exe XPS_9350_1.12.2.exe_decompressed.hdr`
+	`PFSextractor.exe XPS_7950_1.5.0.exe_decompressed.hdr`
 
 ## Step 4
 
