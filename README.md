@@ -1,48 +1,124 @@
 ## Introduzione
 
-Ecco come estrarre il file del bios dei laptop Dell dal file .exe (questo metodo funziona solo per laptop Dell, in arrivo la guida per BIOS HP).
-
-## Step 1
-
-Scarica l'ultimo BIOS dal sito Web del tuo fornitore (anche se non stai utilizzando l'ultimo aggiornamento del BIOS, l'offset del blocco CFG è lo stesso, ma considera l'aggiornamento all'ultima versione del BIOS prima di sbloccare il registro MSR e fai attenzione che questo sblocco dovrà essere ripetuto se il BIOS viene aggiornato **dopo** aver sbloccato il registro).
-
-## Step 2
-Nella tua macchina Windows/Mac/Linux, esegui [questo script](https://raw.githubusercontent.com/macos86/Guide_Forum_IT/master/ExtractDellBIOS.py) se siete in ambiente UNIX-like usando `wget` _spazio_ [URL_to_ExtractBiosDell.py](https://raw.githubusercontent.com/macos86/Estrazione-BIOS-da-exe/master/ExtractDellBIOS.py) oppure salvando il *raw* su un file di testo o scaricandolo in formato .py e lanciare Python - (~~questo metodo potrebbe funzionare anche con le ultime versioni, come python3 poiché è retrocompatibile~~) - aprite un terminale e digitate
- 
- `python2.7 ExtractBiosDell.py bios_name.exe`
-
-Sostituite bios_name.exe with con il nome del vostro BIOS, nel mio caso ad esempio: 
+Estrarre il BIOS del proprio PC non è un'operazione da tutti i giorni, tuttavia, nel caso specifico di MacOS può essere utile estrarlo per sbloccare il CFG Lock, in quanto questi non permette a OS X di scrivere in determinate regioni del BIOS. OS X scrive su queste regioni soprattutto per il power management, e se non può accederci non boota.
 
 
-	`python2.7 ExtractBiosDell.py XPS_7950_1.5.0.exe`	 
-	
-## Step 3
+A seconda della marca della motherboard la procedura di estrazione del BIOS può variare.
 
-Ora procuratevi [questo file](https://github.com/LongSoft/PFSExtractor/releases/download/0.1.0/PFSExtractor_0.1.0.zip) della LongSoft ed eseguitelo con Windows (i test su macOS e su GNU/Linux sono ancora in corso, quindi è preferibile un ambiente Windows nativo per eseguire questo script oppure si utilizzi g++ in un ambiente UNIX Like). Aprite il Command prompt, navigate sulla directory corretta (cd \Users\<your_username>\path\to\PFSextractor.exe) ed eseguite questo comando:
+In ogni caso i requisiti minimi da cui partire sono:
 
-	`PFSextractor.exe bios_name.exe_decompressed.hdr`
+- Pacchetto di aggiornamento del BIOS
+- [PFSExtractor](https://github.com/LongSoft/PFSExtractor)
+- [IFRExtract](https://github.com/LongSoft/Universal-IFR-Extractor)
+- [UEFITool](https://github.com/LongSoft/UEFITool)
+- [modGRUBShell.efi](https://github.com/datasone/grub-mod-setup_var/releases)
 
-Nel mio caso:
 
-	`PFSextractor.exe XPS_7950_1.5.0.exe_decompressed.hdr`
+Di seguito le varie procedure di estrazione dei BIOS per le varie marche di motherboard
 
-## Step 4
+## Dell
 
-Aprite la cartella creata da PFSextractor.exe e ordinate i file per dimensioni, il file `.payload` più grande dovrebbe essere il vostro BIOS UEFI.
+La procedura di estrazione del BIOS su motherboard DELL è leggermente diversa dalle altre marche. 
 
-## Step 5
+Questa procedura è stata testata con successo su Mac OS e Windows. Su Linux ci sono dei problemi di compilazione di PFSExtractor. Seguiranno sviluppi
 
-Ora potete tornare alla guida di [khronokernel](https://khronokernel-2.gitbook.io/opencore-vanilla-desktop-guide/extras/msr-lock) che tratta dello sblocco CFG (MSR 0xE2), dico questo qualora aveste dovuto fare tutto questo giro per estrarre il BIOS UEFI dal sito web del vostro produttore :D
+### Requisiti
 
+- Pacchetto di aggiornamento del BIOS (scaricabile dal sito del produttore)
+- [Dell Extract hdr.py](https://github.com/theopolis/uefi-firmware-parser/blob/master/scripts/contrib/dell_extract_hdr.py)
+
+
+### Step 1: estrarre il BIOS in formato HDR dall'EXE
+
+Da una shell scrivere
+
+`python2.7 dell_extract_hdr.py BIOS_UPGRADE.exe`
+
+sostituendo "BIOS_UPGRADE.EXE" con il path del pacchetto di aggiornamento del BIOS.
+
+L'output di questo comando sarà un file con estensione `.hdr`
+
+### Step 2: scompattare il file in formato HDR
+
+Utilizzando PFSExtractor, compilabile con g++ per MacOS, o scaricando l'eseguibile dalla sezione Release del repository GitHub, è possibile scompattare il file con estensione `.hdr` ottenuto dallo **Step 1**.
+
+Da una shell scrivere
+
+`<PATH PFSExtractor> <PATH FILE.HDR>`
+
+sostituendo a `<PATH PFSExtractor>` il path all'eseguibile di PFSExtractor, e a `PATH FILE.HDR` il path al file ottenuto dallo **Step 1**.
+
+L'output sarà una cartella contenente una serie di file, tra cui un file con estensione `.payload`
+
+### Step 3: trovare l'offset del CFG Lock
+
+Con UEFITool aprire il file con estensione `.payload` e premendo `Ctrl + F`, se su Windows, oppure `Command + F`, se su Mac OS, selezionando come criterio di ricerca `Text` e cercando `CFG Lock`.
+
+Nel pannello inferiore uscirà un messaggio simile a 
+
+`Unicode text "CFG Lock" found in PE32 image section at offset XXYYZZ`
+
+Facendo doppio click su questo messaggio e cliccando col tasto destro del mouse su `PE32 image section`, selezionare `Extract as is` e salvare il file con estensione `.bin`.
+
+### Step 4: convertire il file .bin in .txt
+
+Utilizzando `IFRExtract` è possibile convertire il file con estensione `.bin` in un file con estensione `.txt`. 
+
+Da shell scrivere
+
+`<PATH IFRExtract> <PATH FILE.BIN> setup.txt`
+
+### Step 5: trovare l'offset del CFG Lock
+
+Aprire con un editor di testo il file precedentemente convertito e cercare `CFG Lock`
+
+Se presente, il risultato di ricerca sarà simile a 
+
+`CFG Lock, VarStoreInfo (VarOffset/VarName): 0xXYZ`
+
+`0xXYZ` è l'offset che corrisponde alla locazione di memoria dove risiede il valore booleano `CFG Lock`.
+
+Impostando questa variabile, o meglio la locazione di memoria a `0x00` il `CFG Lock` viene disabilitato.
+
+### Step 6: impostare l'offset a 0x00
+
+Utilizzando una shell modificata di GRUB, è possibile modificare il valore della variabile precedentemente trovata.
+
+Avviare la shell modificata di GRUB tramite shell UEFI:
+
+- da Clover avviare la shell UEFI e navigare nel filesystem (tramite cd e ls) fino a trovare la partizione dove risiede la shell modificata di GRUB.
+- da OpenCore avviare la bootentry corrispondente a `modGRUBShell.efi` (assicurarsi di averlo inserito nella sezione dedicata del config.plist del bootloader)
+
+**Esempio**
+
+`FS0:\EFI\EFI\CLOVER\tools\modGRUBShell.efi` avvia la shell modificata di GRUB che si trova nella partizione `FS0:\`. 
+
+Una volta giunti dinanzi alla shell infine scrivere:
+
+`setup_var 0xXYZ 0x00` dove `0xXYZ` corrisponde all'offset trovato precedentemente.
+
+Una volta terminata la procedura spegnere il PC e riavviarlo.
+
+Infine disabilitare dal `config.plist`:
+
+- **Clover**: `KernelPM` e/o `KernelXCPM` (potrebbe essere necessario solo il primo tra i due)
+- **OpenCore**: `AppleCpuPmCfgLock` e/o `AppleXcpmCfgLock` (stesso discorso)
+
+in quanto queste patch sono altamente instabili e potrebbero portare a riavvii improvvisi della macchina.
 
 **Credits**
 
-[JimboBobB](https://forums.mydigitallife.net/members/jimbobobb.361587/) per lo script in python
+[Khronokernel](https://khronokernel-2.gitbook.io/opencore-vanilla-desktop-guide/extras/msr-lock) per la guida sullo sblocco dell'MSR 0xE2
+
+[theopolis](https://github.com/theopolis) per lo script in Python
 
 [Longsoft](https://github.com/Longsoft) per PFSExtractor
 
 [Il forum MacOS86](https://macos86.it) per aver messo a disposizione il loro repository
 
-[dreamwhite](https://github.com/dreamwhite) per il testing su diversi laptop
+[dreamwhite](https://github.com/dreamwhite) per il testing su diversi laptop e aggiunte di diverse parti della guida originale
 
 [A23SS4NDRO](https://www.macos86.it/profile/996-a23ss4ndro/) per aver scritto questa guida
+
+
+
