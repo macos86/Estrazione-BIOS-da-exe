@@ -43,4 +43,6 @@ Ora potete tornare alla guida di [khronokernel](https://khronokernel-2.gitbook.i
 
 [Il forum MacOS86](https://macos86.it) per aver messo a disposizione il loro repository
 
+[dreamwhite](https://github.com/dreamwhite) per il testing su diversi laptop
+
 [A23SS4NDRO](https://www.macos86.it/profile/996-a23ss4ndro/) per aver scritto questa guida
