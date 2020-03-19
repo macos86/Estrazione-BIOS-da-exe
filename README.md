@@ -7,7 +7,7 @@ Ecco come estrarre il file del bios dei laptop Dell dal file .exe (questo metodo
 Scarica l'ultimo BIOS dal sito Web del tuo fornitore (anche se non stai utilizzando l'ultimo aggiornamento del BIOS, l'offset del blocco CFG è lo stesso, ma considera l'aggiornamento all'ultima versione del BIOS prima di sbloccare il registro MSR e fai attenzione che questo sblocco dovrà essere ripetuto se il BIOS viene aggiornato **dopo** aver sbloccato il registro).
 
 ## Step 2
-Nella tua macchina Windows/Mac/Linux, esegui [questo script](https://raw.githubusercontent.com/macos86/Guide_Forum_IT/master/ExtractDellBIOS.py) se siete in ambiente UNIX-like usando `wget <[URL_to_ExtractBiosDell.py](https://raw.githubusercontent.com/macos86/Estrazione-BIOS-da-exe/master/ExtractDellBIOS.py)>` salvando il *raw* su un file di testo o scaricandolo in formato .py e lanciare Python - (~~questo metodo potrebbe funzionare anche con le ultime versioni, come python3 poiché è retrocompatibile~~) - aprite un terminale e digitate
+Nella tua macchina Windows/Mac/Linux, esegui [questo script](https://raw.githubusercontent.com/macos86/Guide_Forum_IT/master/ExtractDellBIOS.py) se siete in ambiente UNIX-like usando `wget` _spazio_ [URL_to_ExtractBiosDell.py](https://raw.githubusercontent.com/macos86/Estrazione-BIOS-da-exe/master/ExtractDellBIOS.py) oppure salvando il *raw* su un file di testo o scaricandolo in formato .py e lanciare Python - (~~questo metodo potrebbe funzionare anche con le ultime versioni, come python3 poiché è retrocompatibile~~) - aprite un terminale e digitate
  
  `python2.7 biosextract.py bios_name.exe`
 
