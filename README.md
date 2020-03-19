@@ -18,7 +18,7 @@ Sostituite bios_name.exe with con il nome del vostro BIOS, nel mio caso ad esemp
 	
 ## Step 3
 
-Ora procuratevi [questo file](https://github.com/LongSoft/PFSExtractor/releases/download/0.1.0/PFSExtractor_0.1.0.zip) della LongSoft and run this in a Windows machine (Non l'ho testato su Unix, quindi è preferibile un ambiente Windows nativo per eseguire questo script oppure si utilizzi g++ in un ambiente UNIX Like). Aprite il Command prompt, navigate sulla directory corretta (cd \Users\<your_username>\path\to\PFSextractor.exe) ed eseguite questo comando:
+Ora procuratevi [questo file](https://github.com/LongSoft/PFSExtractor/releases/download/0.1.0/PFSExtractor_0.1.0.zip) della LongSoft ed eseguitelo con Windows (i test su macOS e su GNU/Linux sono ancora in corso, quindi è preferibile un ambiente Windows nativo per eseguire questo script oppure si utilizzi g++ in un ambiente UNIX Like). Aprite il Command prompt, navigate sulla directory corretta (cd \Users\<your_username>\path\to\PFSextractor.exe) ed eseguite questo comando:
 
 	`PFSextractor.exe bios_name.exe_decompressed.hdr`
 
