@@ -8,7 +8,7 @@ Detto questo proseguiamo con la guida, non ho inventato nulla, ho solo sistemato
 
 Per estrarre un BIOS Lenovo utilizzeremo "`innoextract`", un programma che è stato sviluppato sia per GNU/Linux che per Windows.
 
-## Di che cosa hai bisogno
+## Occorrente
 
 - BIOS del vostro portatile in formato .exe ([ad esempio questo](https://download.lenovo.com/consumer/mobiles/bycn31ww.exe))
 - Innoextract va preso [qua](https://github.com/dscharrer/innoextract/releases).
